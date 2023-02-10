@@ -1,6 +1,7 @@
 package com.example.mylistshop.domain
 
-//должен уметь делать все, что требуется нашим UseCase, но как он будет это делать мы не знаем
+import androidx.lifecycle.LiveData
+
 interface ShopListRepository {
     fun addShopItem(shopItem: ShopItem)
 
@@ -10,6 +11,6 @@ interface ShopListRepository {
 
     fun getByIdShopItem(shopItemId : Int) : ShopItem
 
-    fun getShopList() : List<ShopItem>
+    fun getShopList() : LiveData<List<ShopItem>>
 
 }
