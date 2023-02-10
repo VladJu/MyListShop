@@ -1,15 +1,26 @@
 package com.example.mylistshop.data
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.mylistshop.domain.ShopItem
 import com.example.mylistshop.domain.ShopListRepository
 
-// это надо чтобы мы работали с 1 репозиторием на всех экранах
 object ShopListRepositoryImpl : ShopListRepository {
 
+    private val shopListLD= MutableLiveData<List<ShopItem>>()
+
     private val shopList = mutableListOf<ShopItem>()
-    //будет хранить id элементов
+
 
     private var autoIncrementId = 0
+
+
+    init {
+        for (i in 0 until 10){
+            val item=ShopItem("Name $i",i,true)
+            addShopItem(item)
+        }
+    }
 
     override fun addShopItem(shopItem: ShopItem) {
         if (shopItem.id == ShopItem.UNDEFINED_ID){
@@ -17,29 +28,32 @@ object ShopListRepositoryImpl : ShopListRepository {
 
         }
         shopList.add(shopItem)
+        updateList()
     }
 
-    override fun deleteShopItem(item: ShopItem) {
-        shopList.remove(item)
+    override fun deleteShopItem(shopItem: ShopItem) {
+        shopList.remove(shopItem)
+        updateList()
     }
 
     override fun editShopItem(shopItem: ShopItem) {
-        //найдем старый элемент
         val oldElement = getByIdShopItem(shopItem.id)
-        //удалием его
         shopList.remove(oldElement)
-        //вставим новый
         addShopItem(shopItem)
     }
 
     override fun getByIdShopItem(shopItemId: Int): ShopItem {
         return shopList.find { it.id == shopItemId } ?: throw RuntimeException(
             "Element with id $shopItemId not found"
-        )// принмает predicate- которая возвращает тру или фолс
+        )
     }
 
-    override fun getShopList(): List<ShopItem> {
-        //чтобы создать копию листа и возвращать копию shopList
-        return shopList.toList()
+    override fun getShopList(): LiveData<List<ShopItem>> {
+        return shopListLD
     }
+    private fun updateList(){
+        shopListLD.value= shopList.toList()
+    }
+
+
 }
