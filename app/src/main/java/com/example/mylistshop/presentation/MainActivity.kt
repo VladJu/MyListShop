@@ -1,26 +1,41 @@
 package com.example.mylistshop.presentation
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.example.mylistshop.R
 
 class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: MainViewModel
-    var countDelete = 0
+    private lateinit var adapterShop: ShopListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setupRecyclerView()
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         viewModel.shopList.observe(this) {
-            Log.d("MainActivityTest", it.toString())
-            if (countDelete == 0) {
-                countDelete++
-                val item = it[0]
-                viewModel.changeEnableState(item)
-            }
+            adapterShop.shopList = it
+        }
+
+    }
+
+    //метод который будет настраивать RecyclerView
+    private fun setupRecyclerView() {
+        val rvShopList = findViewById<RecyclerView>(R.id.rv_shop_list)
+        adapterShop = ShopListAdapter()
+        with(rvShopList) {
+
+            adapter = adapterShop
+            recycledViewPool.setMaxRecycledViews(
+                ShopListAdapter.VIEW_TYPE_ENABLED,
+                ShopListAdapter.MAX_POOL_SIZE
+            )
+            recycledViewPool.setMaxRecycledViews(
+                ShopListAdapter.VIEW_TYPE_DISABLED,
+                ShopListAdapter.MAX_POOL_SIZE
+            )
         }
 
     }

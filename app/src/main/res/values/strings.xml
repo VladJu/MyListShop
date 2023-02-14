@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MyListShop</string>
+    <string name="button_add_new_shop_item">кнопка доабвления нового элемента покупки</string>
 </resources>
