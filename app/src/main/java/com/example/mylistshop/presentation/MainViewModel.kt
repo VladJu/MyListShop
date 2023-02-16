@@ -14,8 +14,8 @@ class MainViewModel :ViewModel() {
     private val  getShopListUseCase = GetShopListUseCase(repository)
     private val  deleteShopItemUseCase = DeleteShopItemUseCase(repository)
     private val  editShopItemUseCase = EditShopItemUseCase(repository)
-    val shopList = getShopListUseCase.getShopList()
 
+    val shopList = getShopListUseCase.getShopList()
 
     fun deleteShopItem(item: ShopItem){
         deleteShopItemUseCase.deleteShopItem(item)
