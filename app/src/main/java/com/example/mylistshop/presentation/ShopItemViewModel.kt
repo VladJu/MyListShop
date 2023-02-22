@@ -9,7 +9,7 @@ import com.example.mylistshop.domain.EditShopItemUseCase
 import com.example.mylistshop.domain.GetByIdShopItemUseCase
 import com.example.mylistshop.domain.ShopItem
 
-class AddOrEditShopItemViewModel : ViewModel() {
+class ShopItemViewModel : ViewModel() {
 
     private val repository = ShopListRepositoryImpl
 
