@@ -15,7 +15,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity(),ShopItemFragment.OnEditingFinishedListener {
     private lateinit var viewModel: MainViewModel
-    private lateinit var adapterShop: ShopListAdapter
+    private lateinit var adapterShop : ShopListAdapter
 
     private lateinit var binding: ActivityMainBinding
 
@@ -29,7 +29,6 @@ class MainActivity : AppCompatActivity(),ShopItemFragment.OnEditingFinishedListe
         viewModel.shopList.observe(this) {
             adapterShop.submitList(it)
         }
-
         binding.buttonAddShopItem.setOnClickListener {
             if (bookOrientationThePage()) {
                 val intent = ShopItemActivity.newIntentAddItem(this)
@@ -37,7 +36,6 @@ class MainActivity : AppCompatActivity(),ShopItemFragment.OnEditingFinishedListe
             } else {
                 launchFragment(ShopItemFragment.newInstanceAddItem())
             }
-
         }
     }
 
@@ -51,7 +49,6 @@ class MainActivity : AppCompatActivity(),ShopItemFragment.OnEditingFinishedListe
         return binding.shopItemContainer == null
     }
 
-
     private fun launchFragment(fragment: Fragment) {
         supportFragmentManager.popBackStack()
         supportFragmentManager.beginTransaction()
@@ -62,6 +59,7 @@ class MainActivity : AppCompatActivity(),ShopItemFragment.OnEditingFinishedListe
 
     private fun setupRecyclerView() {
         with(binding.rvShopList) {
+            adapterShop=ShopListAdapter()
             adapter = adapterShop
             recycledViewPool.setMaxRecycledViews(
                 ShopListAdapter.VIEW_TYPE_ENABLED,

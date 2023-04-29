@@ -66,7 +66,6 @@ class ShopItemFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
             onEditingFinishedListener.onEditingFinished()
         }
