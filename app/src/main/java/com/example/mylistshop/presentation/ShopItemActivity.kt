@@ -3,15 +3,15 @@ package com.example.mylistshop.presentation
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mylistshop.R
 import com.example.mylistshop.domain.ShopItem
 
-class ShopItemActivity : AppCompatActivity(),ShopItemFragment.OnEditingFinishedListener {
+class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
     private var screenMode: String = MODE_UNKNOWN
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,7 +19,7 @@ class ShopItemActivity : AppCompatActivity(),ShopItemFragment.OnEditingFinishedL
         parseIntent()
         //вызываем метод только при первом создании активити
         //значит активити не пересоздавалась и создаем фрагмент
-        if (savedInstanceState == null){
+        if (savedInstanceState == null) {
             launchRightMode()
         }
     }
@@ -38,7 +38,6 @@ class ShopItemActivity : AppCompatActivity(),ShopItemFragment.OnEditingFinishedL
             .add(R.id.shop_item_container, fragment)
             .commit()
     }
-
 
 
     private fun parseIntent() {
