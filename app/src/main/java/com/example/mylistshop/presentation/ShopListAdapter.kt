@@ -64,7 +64,6 @@ class ShopListAdapter : ListAdapter<ShopItem, ShopItemViewHolder>(ShopItemDiffCa
         val item = getItem(position)
         return if (item.enabled) {
             VIEW_TYPE_ENABLED
-
         } else {
             VIEW_TYPE_DISABLED
         }
