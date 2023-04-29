@@ -16,6 +16,7 @@ import com.example.mylistshop.R
 import com.example.mylistshop.databinding.FragmentShopItemBinding
 import com.example.mylistshop.domain.ShopItem
 import com.google.android.material.textfield.TextInputLayout
+import javax.inject.Inject
 
 class ShopItemFragment : Fragment() {
 
@@ -30,8 +31,16 @@ class ShopItemFragment : Fragment() {
     private var screenMode: String = MODE_UNKNOWN
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy {
+        (requireActivity().application as AppShopList).component
+    }
+
 
     override fun onAttach(context: Context) {
+        component.inject(this)
         super.onAttach(context)
         if (context is OnEditingFinishedListener) {
             onEditingFinishedListener = context
@@ -57,9 +66,9 @@ class ShopItemFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[ShopItemViewModel::class.java]
         binding.viewModel = viewModel
-        binding.lifecycleOwner=viewLifecycleOwner
+        binding.lifecycleOwner = viewLifecycleOwner
         addTextChangeListeners()
         launchRightMode()
         observeViewModel()

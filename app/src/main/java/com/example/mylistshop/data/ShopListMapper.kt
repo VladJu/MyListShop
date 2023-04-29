@@ -1,9 +1,10 @@
 package com.example.mylistshop.data
 
 import com.example.mylistshop.domain.ShopItem
+import javax.inject.Inject
 
 //4
-class ShopListMapper {
+class ShopListMapper @Inject constructor(){
     //преобразует сущность домайн слоя в модель БД
  fun mapEntityToDbModel(shopItem: ShopItem) : ShopItemDbModel {
      return ShopItemDbModel(
