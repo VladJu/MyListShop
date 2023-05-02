@@ -4,11 +4,11 @@
     package="com.example.mylistshop">
 
     <application
+        android:name=".presentation.AppShopList"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:name=".presentation.AppShopList"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -16,8 +16,8 @@
         tools:targetApi="31">
         <activity
             android:name=".presentation.ShopItemActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".presentation.MainActivity"
             android:exported="true">
@@ -27,6 +27,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name=".data.ShopListProvider"
+            android:authorities="com.example.mylistshop"
+            android:exported="true" />
     </application>
 
 </manifest>
