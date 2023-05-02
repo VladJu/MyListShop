@@ -1,5 +1,6 @@
 package com.example.mylistshop.presentation
 
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -47,6 +48,16 @@ class MainActivity : AppCompatActivity(),ShopItemFragment.OnEditingFinishedListe
                 launchFragment(ShopItemFragment.newInstanceAddItem())
             }
         }
+        //необхоидим данный класс для того чтобы отправлять любые запросы в ContentProvider
+        contentResolver.query(
+            //Экземпляр uri
+            Uri.parse("content://com.example.mylistshop/shop_items"),
+            null,
+            null,
+            null,
+            null,
+            null
+        )
     }
 
     override fun onEditingFinished() {
