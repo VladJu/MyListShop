@@ -2,6 +2,7 @@ package com.example.mylistshop.presentation
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.ViewDataBinding
@@ -12,13 +13,15 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mylistshop.R
 import com.example.mylistshop.databinding.ActivityMainBinding
+import com.example.mylistshop.domain.ShopItem
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
-class MainActivity : AppCompatActivity(),ShopItemFragment.OnEditingFinishedListener {
+class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
     private lateinit var viewModel: MainViewModel
-    private lateinit var adapterShop : ShopListAdapter
+    private lateinit var adapterShop: ShopListAdapter
     private lateinit var binding: ActivityMainBinding
 
     @Inject
@@ -33,10 +36,10 @@ class MainActivity : AppCompatActivity(),ShopItemFragment.OnEditingFinishedListe
         component.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        binding=ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupRecyclerView()
-        viewModel = ViewModelProvider(this,viewModelFactory)[MainViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
         viewModel.shopList.observe(this) {
             adapterShop.submitList(it)
         }
@@ -48,24 +51,49 @@ class MainActivity : AppCompatActivity(),ShopItemFragment.OnEditingFinishedListe
                 launchFragment(ShopItemFragment.newInstanceAddItem())
             }
         }
-        //необхоидим данный класс для того чтобы отправлять любые запросы в ContentProvider
-        contentResolver.query(
-            //Экземпляр uri
-            Uri.parse("content://com.example.mylistshop/shop_items"),
-            null,
-            null,
-            null,
-            null,
-            null
-        )
+        thread {
+            //необходим данный класс для того чтобы отправлять любые запросы в ContentProvider
+            val cursor = contentResolver.query(
+                //Экземпляр uri
+                Uri.parse("content://com.example.mylistshop/shop_items"),
+                null,
+                null,
+                null,
+                null,
+                null
+            )
+            //5)
+            //получаем из Cursor данные
+            //при 1 вызове он переместиться к записи с id =0 и вернет true, провалимся в цикл прочитаем данные
+            //и снова вызовем moveToNext()
+            //Сразу из Cursor не можем получить все данные, нам надо считывать данные из конкретных таблиц
+            while (cursor?.moveToNext() == true) {
+                //получаем значения колонок по их индексу
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+                val count = cursor.getInt(cursor.getColumnIndexOrThrow("count"))
+                //если больше 0 то true
+                val enabled = cursor.getInt(cursor.getColumnIndexOrThrow("enabled")) > 0
+                val shopItem = ShopItem(
+                    id = id,
+                    name = name,
+                    count = count,
+                    enabled = enabled
+                )
+                Log.d("MainActivity", shopItem.toString())
+            }
+            //Закрываем курсор чтобы не было утечки
+            cursor?.close()
+        }
     }
 
+
     override fun onEditingFinished() {
-        Toast.makeText(this@MainActivity,"Success",Toast.LENGTH_SHORT).show()
+        Toast.makeText(this@MainActivity, "Success", Toast.LENGTH_SHORT).show()
         supportFragmentManager.popBackStack()
     }
 
-    //определяем в какой ориентации находимся
+
     private fun bookOrientationThePage(): Boolean {
         return binding.shopItemContainer == null
     }
@@ -80,7 +108,7 @@ class MainActivity : AppCompatActivity(),ShopItemFragment.OnEditingFinishedListe
 
     private fun setupRecyclerView() {
         with(binding.rvShopList) {
-            adapterShop=ShopListAdapter()
+            adapterShop = ShopListAdapter()
             adapter = adapterShop
             recycledViewPool.setMaxRecycledViews(
                 ShopListAdapter.VIEW_TYPE_ENABLED,
