@@ -1,6 +1,8 @@
 package com.example.mylistshop.presentation
 
+import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,15 +10,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.mylistshop.R
 import com.example.mylistshop.databinding.FragmentShopItemBinding
 import com.example.mylistshop.domain.ShopItem
-import com.google.android.material.textfield.TextInputLayout
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class ShopItemFragment : Fragment() {
 
@@ -83,8 +82,8 @@ class ShopItemFragment : Fragment() {
 
     private fun launchRightMode() {
         when (screenMode) {
-            MODE_EDIT -> launchEditScreen()
-            MODE_ADD -> launchAddScreen()
+            MODE_EDIT -> launchEditMode()
+            MODE_ADD -> launchAddMode()
         }
     }
 
@@ -117,7 +116,7 @@ class ShopItemFragment : Fragment() {
         })
     }
 
-    private fun launchEditScreen() {
+    private fun launchEditMode() {
         viewModel.getShopItemById(shopItemId)
         binding.buttonSave.setOnClickListener {
             viewModel.editShopItem(
@@ -128,10 +127,27 @@ class ShopItemFragment : Fragment() {
 
     }
 
-    private fun launchAddScreen() {
+    private fun launchAddMode() {
         binding.buttonSave.setOnClickListener {
-            viewModel.addShopItem(binding.etName.text?.toString(), binding.etCount.text?.toString())
+//            viewModel.addShopItem(
+//                binding.etName.text?.toString(),
+//                binding.etCount.text?.toString()
+//            )
+
+            thread {
+                //5)вставляем данные  в БД при помощи провайдера
+                context?.contentResolver?.insert(
+                    Uri.parse("content://com.example.mylistshop/shop_items"),
+                    ContentValues().apply {
+                        put("id", 0)
+                        put("name", binding.etName.text?.toString())
+                        put("count", binding.etCount.text?.toString()?.toInt())
+                        put("enabled", true)
+                    }
+                )
+            }
         }
+
     }
 
 

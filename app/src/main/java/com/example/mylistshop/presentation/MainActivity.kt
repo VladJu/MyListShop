@@ -62,7 +62,6 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
                 null,
                 null
             )
-            //5)
             //получаем из Cursor данные
             //при 1 вызове он переместиться к записи с id =0 и вернет true, провалимся в цикл прочитаем данные
             //и снова вызовем moveToNext()
@@ -72,7 +71,6 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
                 val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
                 val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
                 val count = cursor.getInt(cursor.getColumnIndexOrThrow("count"))
-                //если больше 0 то true
                 val enabled = cursor.getInt(cursor.getColumnIndexOrThrow("enabled")) > 0
                 val shopItem = ShopItem(
                     id = id,
