@@ -135,7 +135,6 @@ class ShopItemFragment : Fragment() {
 //            )
 
             thread {
-                //5)вставляем данные  в БД при помощи провайдера
                 context?.contentResolver?.insert(
                     Uri.parse("content://com.example.mylistshop/shop_items"),
                     ContentValues().apply {
