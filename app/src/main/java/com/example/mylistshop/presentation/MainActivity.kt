@@ -52,9 +52,8 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             }
         }
         thread {
-            //необходим данный класс для того чтобы отправлять любые запросы в ContentProvider
+            //contentResolver -необходим  для того чтобы отправлять любые запросы в ContentProvider
             val cursor = contentResolver.query(
-                //Экземпляр uri
                 Uri.parse("content://com.example.mylistshop/shop_items"),
                 null,
                 null,
@@ -80,7 +79,6 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
                 )
                 Log.d("MainActivity", shopItem.toString())
             }
-            //Закрываем курсор чтобы не было утечки
             cursor?.close()
         }
     }
@@ -156,7 +154,15 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val item = adapterShop.currentList[viewHolder.adapterPosition]
-                viewModel.deleteShopItem(item)
+                //viewModel.deleteShopItem(item)
+                thread {
+                    //4)
+                    contentResolver.delete(
+                        Uri.parse("content://com.example.mylistshop/shop_items"),
+                        null,
+                        arrayOf(item.id.toString())
+                    )
+                }
             }
 
         }

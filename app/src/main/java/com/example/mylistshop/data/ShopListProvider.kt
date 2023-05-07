@@ -24,7 +24,7 @@ class ShopListProvider : ContentProvider() {
         (context as AppShopList).component
     }
 
-    //позволят обрабатывать запросы которые приходят в данный провайдер
+    //uriMatcher позволяет обрабатывать запросы которые приходят в данный провайдер
     //ему будем передавать uri и он будет возвращать тип Int- код(значение) этого запроса
     //код(значение) указываем сами для каждого запроса свой
     private val uriMatcher = UriMatcher(UriMatcher.NO_MATCH).apply {
@@ -46,7 +46,6 @@ class ShopListProvider : ContentProvider() {
         selectionArgs: Array<out String>?,
         sortOrder: String?
     ): Cursor? {
-        //передаем uri в matcher проверяем запрос и получаем код ответа
         return when (uriMatcher.match(uri)) {
             GET_SHOP_ITEMS_QUERY -> {
                 shopListDao.getShopListCursor()
@@ -62,30 +61,46 @@ class ShopListProvider : ContentProvider() {
     }
 
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
-        //1)Проверка, что приходит корректный uri по которому вставляем данные и вставляем их в БД
+        //Проверка, что приходит корректный uri по которому вставляем данные и вставляем их в БД
         when (uriMatcher.match(uri)) {
             GET_SHOP_ITEMS_QUERY -> {
-                //2) получаем данные из ContentValues
                 if (values == null) return null
                 val id = values.getAsInteger("id")
                 val name = values.getAsString("name")
                 val count = values.getAsInteger("count")
                 val enabled = values.getAsBoolean("enabled")
-                val shopItem=ShopItem(
+                val shopItem = ShopItem(
                     id = id,
                     name = name,
                     count = count,
                     enabled = enabled
                 )
-                //4)
                 shopListDao.addShopItemSync(mapper.mapEntityToDbModel(shopItem))
             }
         }
         return null
     }
 
+    //1)
+    //Возвращает Int - это значение обозначает сколько строк в Бд было удалено
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {
-        TODO("Not yet implemented")
+        when (uriMatcher.match(uri)) {
+            GET_SHOP_ITEMS_QUERY -> {
+                //Если бы надо было реализовать самим БД в ручную
+                //вызвали бы метод delete() передали мы конкретный uri и тд
+                //"DELETE FROM shop_items WHERE id = ? AND name = ?"
+                //"id = ? AND name = ?" - это selection
+                // "5", "Twix" - это selectionArgs
+
+                //2)
+                //C помощью Room
+                //selection - указали уже в интерфейсе в самом запросе "WHERE id=:shopItemId"
+                //Надо только передать самое значение
+                val id = selectionArgs?.get(0)?.toInt() ?: -1
+                return shopListDao.deleteShopItemSync(id)
+            }
+        }
+        return 0
     }
 
     override fun update(

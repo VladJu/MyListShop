@@ -10,8 +10,8 @@ import androidx.room.Query
 
 @Dao
 interface ShopListDao {
-    //надо надо чтобы эти методы не блокировали поток, а могли прервать свое выполнение на время пока
-    //операция не будет завершена методы должны быть suspend
+    //надо надо чтобы эти методы не блокировали поток, а могли прервать свое выполнение на время,
+    //пока операция не будет завершена методы должны быть suspend
 
     @Query("SELECT * FROM shop_items")
     fun getShopList(): LiveData<List<ShopItemDbModel>>
@@ -22,7 +22,7 @@ interface ShopListDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addShopItem(shopItemDbModel: ShopItemDbModel)
-     //3)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addShopItemSync(shopItemDbModel: ShopItemDbModel)
 
@@ -30,6 +30,9 @@ interface ShopListDao {
     @Query("DELETE FROM shop_items WHERE id=:shopItemId")
     suspend fun deleteShopItem(shopItemId: Int)
 
+    //3)
+    @Query("DELETE FROM shop_items WHERE id=:shopItemId")
+    fun deleteShopItemSync(shopItemId: Int) : Int
 
     @Query("SELECT * FROM shop_items WHERE id=:shopItemId LIMIT 1")
     suspend fun getShopItem(shopItemId: Int): ShopItemDbModel
